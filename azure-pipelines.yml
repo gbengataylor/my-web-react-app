@@ -19,7 +19,7 @@ variables:
    # Application name that needs to be deployed
    application_name: myreactwebapp
    # The above image registry comes from default-route of openshift internal registry
-   image_registry: default-route-openshift-image-registry.apps.cluster-z4tjw.dynamic.redhatworkshops.io/
+   image_registry: default-route-openshift-image-registry.apps.cluster-z4tjw.dynamic.redhatworkshops.io
 
 
 stages:
