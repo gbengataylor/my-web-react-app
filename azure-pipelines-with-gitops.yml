@@ -67,7 +67,7 @@ stages:
             inputs:
               targetType: inline
               script: |       
-                 git config --local user.email "73549783+gbengataylor@users.noreply.github.com"
+                 git config --local user.email "30447678+gbengataylor@users.noreply.github.com"
                  git config --local user.name "gbengataylor"
                  git add ./helm/app/values.yaml
                
