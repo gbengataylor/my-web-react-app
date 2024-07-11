@@ -18,7 +18,7 @@ variables:
    namespace_prod: prod-env
    # Application name that needs to be deployed
    application_name: myreactwebapp
-   # The above image registry comes from default-route of openshift internal registry
+   # The above image registry comes from default-route of openshift internal registry ok
    image_registry: default-route-openshift-image-registry.apps.cluster-z4tjw.dynamic.redhatworkshops.io
 
 
