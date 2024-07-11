@@ -12,8 +12,8 @@ resources:
  repositories:
    - repository: my-web-react-app-gitops
      type: github
-     endpoint: arunhari82
-     name: arunhari82/my-web-react-app-gitops
+     endpoint: gbengataylor
+     name: gbengataylor/my-web-react-app-gitops
 
 pool:
   vmImage: ubuntu-latest
@@ -38,7 +38,7 @@ stages:
           displayName: Build and Push
           inputs:
             containerRegistry: 'quay-container-registry'
-            repository: 'anattama/my-web-react-app'
+            repository: 'gbengataylor/my-web-react-app'
             command: 'buildAndPush'
             Dockerfile: '**/Dockerfile'
             tags: $(GIT_SHA)
