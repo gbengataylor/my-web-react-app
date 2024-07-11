@@ -17,6 +17,8 @@ resources:
 
 pool:
   vmImage: ubuntu-latest
+  #to use openshift pods as agents
+  #name: "openshift Agent Pool"
 
 variables:
   GIT_SHA: $(Build.SourceVersion)
