@@ -30,13 +30,13 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags:  ${{ secrets.QUAY_URL }}/anattama/my-web-react-app:${{ env.GIT_SHA }}
+          tags:  ${{ secrets.QUAY_URL }}/gbengataylor/my-web-react-app:${{ env.GIT_SHA }}
           file: ./Dockerfile
 
       - name: Checkout Manifest Repo
         uses: actions/checkout@v4  
         with:
-          repository: arunhari82/my-web-react-app-gitops
+          repository: gbengataylor/my-web-react-app-gitops
           token: ${{ secrets.MANIFEST_REPO_PAT }}
           persist-credentials: true
 
@@ -49,15 +49,15 @@ jobs:
     
       - name: Commit files # transfer the new html files back into the repository
         run: |
-          git config --local user.email "73549783+arunhari82@users.noreply.github.com"
-          git config --local user.name "arunhari82"
+          git config --local user.email "73549783+gbengataylor@users.noreply.github.com"
+          git config --local user.name "gbengataylor"
           git add ./helm/app/values.yaml
           git commit -m "${{ env.GIT_SHA }} - ${{env.commitmsg}}"  
       
       - name: Push changes to Manifest Repo # push the output folder to your repo
         uses: ad-m/github-push-action@master
         with:
-          repository: arunhari82/my-web-react-app-gitops
+          repository: gbengataylor/my-web-react-app-gitops
           github_token: ${{ secrets.MANIFEST_REPO_PAT }}
             
   
