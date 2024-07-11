@@ -64,7 +64,8 @@ stages:
         steps:
 
            - task: oc-setup@3
-              inputs:
+             displayName: CD - OC Setup
+             inputs:
                 connectionType: 'OpenShift Connection Service'
                 openshiftService: 'Openshift Connection' 
                 
