@@ -16,9 +16,9 @@ resources:
      name: gbengataylor/my-web-react-app-gitops
 
 pool:
-  vmImage: ubuntu-latest
+  #vmImage: ubuntu-latest
   #to use openshift pods as agents
-  #name: "openshift Agent Pool"
+  name: "openshift Agent Pool"
 
 variables:
   GIT_SHA: $(Build.SourceVersion)
