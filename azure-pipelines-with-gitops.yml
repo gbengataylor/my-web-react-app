@@ -16,9 +16,9 @@ resources:
      name: gbengataylor/my-web-react-app-gitops
 
 pool:
-  #vmImage: ubuntu-latest
-  #to use openshift pods as agents
-  name: "openshift Agent Pool"
+  vmImage: ubuntu-latest
+  #to use openshift pods as agents, however, this won't work because the agent doesn't have docker/podman
+  #name: "openshift Agent Pool"
 
 variables:
   GIT_SHA: $(Build.SourceVersion)
