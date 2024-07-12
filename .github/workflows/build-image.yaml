@@ -5,6 +5,7 @@ on:
    branches: 
      - main
 jobs:
+#CI
   build-image:
     runs-on: ubuntu-latest
     env:
@@ -32,7 +33,7 @@ jobs:
           push: true
           tags:  ${{ secrets.QUAY_URL }}/gbengataylor/my-web-react-app:${{ env.GIT_SHA }}
           file: ./Dockerfile
-
+#CD
       - name: Checkout Manifest Repo
         uses: actions/checkout@v4  
         with:
