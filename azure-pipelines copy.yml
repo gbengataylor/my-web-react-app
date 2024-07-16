@@ -50,7 +50,7 @@ stages:
                 script: |
                   oc get bc $(application_name) -n $(namespace_dev)
                   if [ $? -gt 0 ]; then
-                      oc new-build $(Build.Repository.Uri) --name $(application_name) -n $(namespace_dev) -l app=$(application_name)
+                      oc new-build $(Build.Repository.Uri) --name $(application_name) -n $(namespace_dev) -l app=$(application_name) --allow-missing-imagestream-tags 
                   else
                      # This build will automatically trigger deployment.
                      oc start-build $(application_name) -n $(namespace_dev) -w

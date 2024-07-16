@@ -87,7 +87,7 @@ stages:
                  # Write your commands here
                  oc get deployment $(application_name) -n $(namespace_dev)
                  if [ $? -gt 0 ];then
-                     oc new-app --image-stream $(application_name):latest -n $(namespace_dev) -l app=$(application_name)
+                     oc new-app --image-stream $(application_name):latest -n $(namespace_dev) -l app=$(application_name) --allow-missing-imagestream-tags 
                  fi
 
            - task: Bash@3
