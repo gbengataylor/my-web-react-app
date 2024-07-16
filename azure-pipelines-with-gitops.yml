@@ -1,83 +1,83 @@
-# Starter pipeline
+# # Starter pipeline
 
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# # Start with a minimal pipeline that you can customize to build and deploy your code.
+# # Add steps that build, run tests, deploy, and more:
+# # https://aka.ms/yaml
 
 
-trigger:
-- main
+# trigger:
+# - main
 
-resources:
- repositories:
-   - repository: my-web-react-app-gitops
-     type: github
-     endpoint: gbengataylor
-     name: gbengataylor/my-web-react-app-gitops
+# resources:
+#  repositories:
+#    - repository: my-web-react-app-gitops
+#      type: github
+#      endpoint: gbengataylor
+#      name: gbengataylor/my-web-react-app-gitops
 
-pool:
-  vmImage: ubuntu-latest
-  #to use openshift pods as agents, however, this won't work because the agent doesn't have docker/podman
-  #name: "openshift Agent Pool"
+# pool:
+#   vmImage: ubuntu-latest
+#   #to use openshift pods as agents, however, this won't work because the agent doesn't have docker/podman
+#   #name: "openshift Agent Pool"
 
-variables:
-  GIT_SHA: $(Build.SourceVersion)
-  GIT_BRANCH: $(Build.SourceBranchName)
+# variables:
+#   GIT_SHA: $(Build.SourceVersion)
+#   GIT_BRANCH: $(Build.SourceBranchName)
 
-stages:
-  - stage: CI
-    displayName: CI Stage
-    jobs:
-      - job: build
-        displayName: build
-        steps:
-        - task: Docker@2
-          displayName: Login to Quay
-          inputs:
-            containerRegistry: 'quay-container-registry'
-            command: 'login'
-        - task: Docker@2
-          displayName: Build and Push
-          inputs:
-            containerRegistry: 'quay-container-registry'
-            repository: 'gbengataylor/my-web-react-app'
-            command: 'buildAndPush'
-            Dockerfile: '**/Dockerfile'
-            tags: $(GIT_SHA)
-  - stage: CD
-    displayName: Update the Gitops Repo
-    jobs:
-      - job: deploy
-        displayName: Update Gitops Repo
-        steps:
+# stages:
+#   - stage: CI
+#     displayName: CI Stage
+#     jobs:
+#       - job: build
+#         displayName: build
+#         steps:
+#         - task: Docker@2
+#           displayName: Login to Quay
+#           inputs:
+#             containerRegistry: 'quay-container-registry'
+#             command: 'login'
+#         - task: Docker@2
+#           displayName: Build and Push
+#           inputs:
+#             containerRegistry: 'quay-container-registry'
+#             repository: 'gbengataylor/my-web-react-app'
+#             command: 'buildAndPush'
+#             Dockerfile: '**/Dockerfile'
+#             tags: $(GIT_SHA)
+#   - stage: CD
+#     displayName: Update the Gitops Repo
+#     jobs:
+#       - job: deploy
+#         displayName: Update Gitops Repo
+#         steps:
         
-          - checkout: my-web-react-app-gitops
-            displayName: Checkout Gitops Repository
-            persistCredentials: true
-          - task: Bash@3
-            displayName: Update image SHA signature
-            inputs:
-              targetType: inline
-              script: |
-                 sed -e 's/\(.*tag:\) \(.*\)/\1 $(GIT_SHA)/g' ./helm/app/values.yaml > ./helm/app/values.yaml.temp
-                 rm ./helm/app/values.yaml
-                 mv ./helm/app/values.yaml.temp ./helm/app/values.yaml
-          - task: Bash@3
-            displayName: Configure Git
-            inputs:
-              targetType: inline
-              script: |       
-                 git config --local user.email "30447678+gbengataylor@users.noreply.github.com"
-                 git config --local user.name "gbengataylor"
-                 git add ./helm/app/values.yaml
+#           - checkout: my-web-react-app-gitops
+#             displayName: Checkout Gitops Repository
+#             persistCredentials: true
+#           - task: Bash@3
+#             displayName: Update image SHA signature
+#             inputs:
+#               targetType: inline
+#               script: |
+#                  sed -e 's/\(.*tag:\) \(.*\)/\1 $(GIT_SHA)/g' ./helm/app/values.yaml > ./helm/app/values.yaml.temp
+#                  rm ./helm/app/values.yaml
+#                  mv ./helm/app/values.yaml.temp ./helm/app/values.yaml
+#           - task: Bash@3
+#             displayName: Configure Git
+#             inputs:
+#               targetType: inline
+#               script: |       
+#                  git config --local user.email "30447678+gbengataylor@users.noreply.github.com"
+#                  git config --local user.name "gbengataylor"
+#                  git add ./helm/app/values.yaml
                
-          - task: Bash@3
-            displayName: Commit and Push Gitops
-            inputs:
-              targetType: inline
-              script: |    
-                 git commit -m 'Updating Git Repo with image SHA : $(GIT_SHA)'
-                 git push origin HEAD:main
+#           - task: Bash@3
+#             displayName: Commit and Push Gitops
+#             inputs:
+#               targetType: inline
+#               script: |    
+#                  git commit -m 'Updating Git Repo with image SHA : $(GIT_SHA)'
+#                  git push origin HEAD:main
                  
                         
 

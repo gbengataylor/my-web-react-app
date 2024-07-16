@@ -1,104 +1,104 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# # Starter pipeline
+# # Start with a minimal pipeline that you can customize to build and deploy your code.
+# # Add steps that build, run tests, deploy, and more:
+# # https://aka.ms/yaml
 
-trigger:
-- main
+# trigger:
+# - main
 
-pool:
- #vmImage: ubuntu-latest
- name: "openshift Agent Pool"
-
-
-variables:
-   # Project Namespace in openshift for dev environment
-   namespace_dev: dev-env
-   # Project Namespace in openshift for dev environment
-   namespace_prod: prod-env
-   # Application name that needs to be deployed
-   application_name: myreactwebapp
-   # The above image registry comes from default-route of openshift internal registry ok
-   image_registry: default-route-openshift-image-registry.apps.cluster-z4tjw.dynamic.redhatworkshops.io
+# pool:
+#  #vmImage: ubuntu-latest
+#  name: "openshift Agent Pool"
 
 
-stages:
-  - stage: CI
-    displayName: CI Stage
-    jobs:
-      - job: build
-        displayName: build
-        steps:
+# variables:
+#    # Project Namespace in openshift for dev environment
+#    namespace_dev: dev-env
+#    # Project Namespace in openshift for dev environment
+#    namespace_prod: prod-env
+#    # Application name that needs to be deployed
+#    application_name: myreactwebapp
+#    # The above image registry comes from default-route of openshift internal registry ok
+#    image_registry: default-route-openshift-image-registry.apps.cluster-z4tjw.dynamic.redhatworkshops.io
+
+
+# stages:
+#   - stage: CI
+#     displayName: CI Stage
+#     jobs:
+#       - job: build
+#         displayName: build
+#         steps:
         
-            - task: oc-setup@3
-              inputs:
-                connectionType: 'OpenShift Connection Service'
-                openshiftService: 'Openshift Connection'
+#             - task: oc-setup@3
+#               inputs:
+#                 connectionType: 'OpenShift Connection Service'
+#                 openshiftService: 'Openshift Connection'
             
-            - task: oc-cmd@3
-              displayName: Create Dev openshift Project
-              inputs:
-                connectionType: 'OpenShift Connection Service'
-                openshiftService: 'Openshift Connection'
-                cmd: 'oc new-project dev-env'
-                ignoreFlag: true
+#             - task: oc-cmd@3
+#               displayName: Create Dev openshift Project
+#               inputs:
+#                 connectionType: 'OpenShift Connection Service'
+#                 openshiftService: 'Openshift Connection'
+#                 cmd: 'oc new-project dev-env'
+#                 ignoreFlag: true
             
-            - task: Bash@3
-              displayName: Start the build 
-              inputs:
-                targetType: 'inline'
-                script: |
-                  oc get bc $(application_name) -n $(namespace_dev)
-                  if [ $? -gt 0 ]; then
-                      oc new-build $(Build.Repository.Uri) --name $(application_name) -n $(namespace_dev) -l app=$(application_name)
-                  else
-                     # This build will automatically trigger deployment.
-                     oc start-build $(application_name) -n $(namespace_dev) -w
-                  fi
+#             - task: Bash@3
+#               displayName: Start the build 
+#               inputs:
+#                 targetType: 'inline'
+#                 script: |
+#                   oc get bc $(application_name) -n $(namespace_dev)
+#                   if [ $? -gt 0 ]; then
+#                       oc new-build $(Build.Repository.Uri) --name $(application_name) -n $(namespace_dev) -l app=$(application_name)
+#                   else
+#                      # This build will automatically trigger deployment.
+#                      oc start-build $(application_name) -n $(namespace_dev) -w
+#                   fi
             
-  - stage: CD
-    displayName: CD Stage
-    jobs:
-      - job: deploy
-        displayName: deploy
-        steps:
+#   - stage: CD
+#     displayName: CD Stage
+#     jobs:
+#       - job: deploy
+#         displayName: deploy
+#         steps:
 
-           - task: oc-setup@3
-             displayName: CD - OC Setup
-             inputs:
-                connectionType: 'OpenShift Connection Service'
-                openshiftService: 'Openshift Connection' 
+#            - task: oc-setup@3
+#              displayName: CD - OC Setup
+#              inputs:
+#                 connectionType: 'OpenShift Connection Service'
+#                 openshiftService: 'Openshift Connection' 
                 
-           - task: oc-cmd@3
-             displayName: Use Dev Project
-             inputs:
-                connectionType: 'OpenShift Connection Service'
-                openshiftService: 'Openshift Connection'
-                cmd: 'oc project $(namespace_dev)'
-                ignoreFlag: true
+#            - task: oc-cmd@3
+#              displayName: Use Dev Project
+#              inputs:
+#                 connectionType: 'OpenShift Connection Service'
+#                 openshiftService: 'Openshift Connection'
+#                 cmd: 'oc project $(namespace_dev)'
+#                 ignoreFlag: true
                 
  
                 
-           - task: Bash@3
-             displayName: 
-             inputs:
-               targetType: 'inline'
-               script: |
-                 # Write your commands here
-                 oc get deployment $(application_name) -n $(namespace_dev)
-                 if [ $? -gt 0 ];then
-                     oc new-app --image-stream $(application_name):latest -n $(namespace_dev) -l app=$(application_name)
-                 fi
+#            - task: Bash@3
+#              displayName: 
+#              inputs:
+#                targetType: 'inline'
+#                script: |
+#                  # Write your commands here
+#                  oc get deployment $(application_name) -n $(namespace_dev)
+#                  if [ $? -gt 0 ];then
+#                      oc new-app --image-stream $(application_name):latest -n $(namespace_dev) -l app=$(application_name)
+#                  fi
 
-           - task: Bash@3
-             displayName: Expose the service as Route
-             inputs:
-               targetType: 'inline'
-               script: |
-                 oc get route $(application_name) -n $(namespace_dev)
-                 if [ $? -gt 0 ];then
-                    oc expose svc/$(application_name) -n $(namespace_dev)
-                 fi
+#            - task: Bash@3
+#              displayName: Expose the service as Route
+#              inputs:
+#                targetType: 'inline'
+#                script: |
+#                  oc get route $(application_name) -n $(namespace_dev)
+#                  if [ $? -gt 0 ];then
+#                     oc expose svc/$(application_name) -n $(namespace_dev)
+#                  fi
             
 
 
